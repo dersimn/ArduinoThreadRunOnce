@@ -1,4 +1,5 @@
 #include <Thread.h>
+#include <ThreadRunOnce.h>
 #include <ThreadController.h>
 
 // ThreadController that will controll all threads
@@ -8,6 +9,8 @@ ThreadController controll = ThreadController();
 Thread* myThread = new Thread();
 //His Thread (not pointer)
 Thread hisThread = Thread();
+//RunOnce Thread
+ThreadRunOnce runOnceThread = ThreadRunOnce();
 
 // callback for myThread
 void niceCallback(){
@@ -18,6 +21,10 @@ void niceCallback(){
 // callback for hisThread
 void boringCallback(){
 	Serial.println("BORING...");
+}
+
+void oneTimeCallback(){
+  Serial.println("Just this time...");
 }
 
 void setup(){
@@ -31,9 +38,16 @@ void setup(){
 	hisThread.onRun(boringCallback);
 	hisThread.setInterval(250);
 
+  // Create Therad to run just one time
+  runOnceThread.onRun(oneTimeCallback);
+
 	// Adds both threads to the controller
 	controll.add(myThread);
 	controll.add(&hisThread); // & to pass the pointer to it
+  controll.add(&runOnceThread);
+
+  // Set Thread to execute once in 5s
+  runOnceThread.setRunOnce(5000);
 }
 
 void loop(){
